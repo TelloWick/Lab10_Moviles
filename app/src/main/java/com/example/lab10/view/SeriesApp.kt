@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.lab10.data.PeliculaApiService
 import com.example.lab10.data.SerieApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -46,6 +47,9 @@ fun SeriesApp() {
         .build()
 
     val servicio = retrofit.create(SerieApiService::class.java)
+
+    val servicioPeliculas =
+        retrofit.create(PeliculaApiService::class.java)
 
     val navController = rememberNavController()
 
@@ -73,7 +77,8 @@ fun SeriesApp() {
         Contenido(
             paddingValues,
             navController,
-            servicio
+            servicio,
+            servicioPeliculas
         )
     }
 }
@@ -183,6 +188,29 @@ fun BarraInferior(navController: NavHostController) {
                 navController.navigate("series")
             }
         )
+
+        NavigationBarItem(
+
+            icon = {
+
+                Icon(
+                    Icons.Outlined.Favorite,
+                    contentDescription = "Peliculas"
+                )
+            },
+
+            label = {
+
+                Text("Peliculas")
+            },
+
+            selected = false,
+
+            onClick = {
+
+                navController.navigate("peliculas")
+            }
+        )
     }
 }
 
@@ -193,7 +221,9 @@ fun Contenido(
 
     navController: NavHostController,
 
-    servicio: SerieApiService
+    servicio: SerieApiService,
+
+    servicioPeliculas: PeliculaApiService
 
 ) {
 
@@ -223,6 +253,13 @@ fun Contenido(
                 ContenidoSeriesListado(
                     navController,
                     servicio
+                )
+            }
+
+            composable("peliculas") {
+
+                ContenidoPeliculas(
+                    servicioPeliculas
                 )
             }
 
