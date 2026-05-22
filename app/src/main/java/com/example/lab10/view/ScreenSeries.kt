@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillParentMaxWidth
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,8 +35,6 @@ import com.example.lab10.data.SerieApiService
 import com.example.lab10.data.SerieModel
 import kotlinx.coroutines.delay
 
-
-
 @Composable
 fun ContenidoSeriesListado(
     navController: NavHostController,
@@ -48,10 +46,18 @@ fun ContenidoSeriesListado(
 
     LaunchedEffect(Unit) {
 
-        val listado = servicio.selectSeries()
+        try {
 
-        listado.forEach {
-            listaSeries.add(it)
+            val listado = servicio.selectSeries()
+
+            listado.forEach {
+
+                listaSeries.add(it)
+            }
+
+        } catch (e: Exception) {
+
+            Log.e("ERROR_API", e.toString())
         }
     }
 
@@ -60,7 +66,7 @@ fun ContenidoSeriesListado(
         item {
 
             Row(
-                modifier = Modifier.fillParentMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -92,7 +98,7 @@ fun ContenidoSeriesListado(
             Row(
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .fillParentMaxWidth(),
+                    .fillMaxWidth(),
 
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -158,13 +164,13 @@ fun ContenidoSerieEditar(
 
     var id by remember { mutableStateOf<Int>(pid) }
 
-    var name by remember { mutableStateOf<String?>("") }
+    var name by remember { mutableStateOf<String>("") }
 
-    var release_date by remember { mutableStateOf<String?>("") }
+    var release_date by remember { mutableStateOf<String>("") }
 
-    var rating by remember { mutableStateOf<String?>("") }
+    var rating by remember { mutableStateOf<String>("") }
 
-    var category by remember { mutableStateOf<String?>("") }
+    var category by remember { mutableStateOf<String>("") }
 
     var grabar by remember { mutableStateOf(false) }
 
@@ -172,17 +178,24 @@ fun ContenidoSerieEditar(
 
         LaunchedEffect(Unit) {
 
-            val objSerie = servicio.selectSerie(id.toString())
+            try {
 
-            delay(100)
+                val objSerie = servicio.selectSerie(id.toString())
 
-            name = objSerie.body()?.name
+                delay(100)
 
-            release_date = objSerie.body()?.release_date
+                name = objSerie.body()?.name ?: ""
 
-            rating = objSerie.body()?.rating.toString()
+                release_date = objSerie.body()?.release_date ?: ""
 
-            category = objSerie.body()?.category
+                rating = objSerie.body()?.rating.toString()
+
+                category = objSerie.body()?.category ?: ""
+
+            } catch (e: Exception) {
+
+                Log.e("ERROR_EDITAR", e.toString())
+            }
         }
     }
 
@@ -201,7 +214,7 @@ fun ContenidoSerieEditar(
             onValueChange = { },
 
             label = {
-                Text("ID (solo lectura)")
+                Text("ID")
             },
 
             readOnly = true,
@@ -211,7 +224,7 @@ fun ContenidoSerieEditar(
 
         TextField(
 
-            value = name!!,
+            value = name,
 
             onValueChange = {
                 name = it
@@ -226,7 +239,7 @@ fun ContenidoSerieEditar(
 
         TextField(
 
-            value = release_date!!,
+            value = release_date,
 
             onValueChange = {
                 release_date = it
@@ -241,7 +254,7 @@ fun ContenidoSerieEditar(
 
         TextField(
 
-            value = rating!!,
+            value = rating,
 
             onValueChange = {
                 rating = it
@@ -256,7 +269,7 @@ fun ContenidoSerieEditar(
 
         TextField(
 
-            value = category!!,
+            value = category,
 
             onValueChange = {
                 category = it
@@ -291,27 +304,34 @@ fun ContenidoSerieEditar(
 
             id,
 
-            name!!,
+            name,
 
-            release_date!!,
+            release_date,
 
-            rating!!.toInt(),
+            rating.toInt(),
 
-            category!!
+            category
         )
 
         LaunchedEffect(Unit) {
 
-            if (id == 0)
+            try {
 
-                servicio.insertSerie(objSerie)
+                if (id == 0)
 
-            else
+                    servicio.insertSerie(objSerie)
 
-                servicio.updateSerie(
-                    id.toString(),
-                    objSerie
-                )
+                else
+
+                    servicio.updateSerie(
+                        id.toString(),
+                        objSerie
+                    )
+
+            } catch (e: Exception) {
+
+                Log.e("ERROR_GUARDAR", e.toString())
+            }
         }
 
         grabar = false
@@ -404,11 +424,18 @@ fun ContenidoSerieEliminar(
 
         LaunchedEffect(Unit) {
 
-            servicio.deleteSerie(id.toString())
+            try {
 
-            borrar = false
+                servicio.deleteSerie(id.toString())
 
-            navController.navigate("series")
+                borrar = false
+
+                navController.navigate("series")
+
+            } catch (e: Exception) {
+
+                Log.e("ERROR_DELETE", e.toString())
+            }
         }
     }
 }

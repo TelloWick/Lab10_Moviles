@@ -38,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Composable
 fun SeriesApp() {
 
-    val urlBase = "http://172.16.1.111:8000/"
+    val urlBase = "http://172.20.10.2:8000/"
 
     val retrofit = Retrofit.Builder()
         .baseUrl(urlBase)
@@ -50,29 +50,32 @@ fun SeriesApp() {
     val navController = rememberNavController()
 
     Scaffold(
+
         modifier = Modifier.padding(top = 40.dp),
 
         topBar = {
+
             BarraSuperior()
         },
 
         bottomBar = {
+
             BarraInferior(navController)
         },
 
         floatingActionButton = {
+
             BotonFAB(navController)
-        },
-
-        content = { paddingValues ->
-
-            Contenido(
-                paddingValues,
-                navController,
-                servicio
-            )
         }
-    )
+
+    ) { paddingValues ->
+
+        Contenido(
+            paddingValues,
+            navController,
+            servicio
+        )
+    }
 }
 
 @Composable
@@ -99,7 +102,7 @@ fun BotonFAB(navController: NavHostController) {
 
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "Add"
+                contentDescription = "Agregar"
             )
         }
     }
@@ -130,22 +133,30 @@ fun BarraSuperior() {
 fun BarraInferior(navController: NavHostController) {
 
     NavigationBar(
+
         containerColor = Color.LightGray
+
     ) {
 
         NavigationBarItem(
 
             icon = {
-                Icon(Icons.Outlined.Home, contentDescription = "Inicio")
+
+                Icon(
+                    Icons.Outlined.Home,
+                    contentDescription = "Inicio"
+                )
             },
 
             label = {
+
                 Text("Inicio")
             },
 
-            selected = navController.currentDestination?.route == "inicio",
+            selected = false,
 
             onClick = {
+
                 navController.navigate("inicio")
             }
         )
@@ -153,16 +164,22 @@ fun BarraInferior(navController: NavHostController) {
         NavigationBarItem(
 
             icon = {
-                Icon(Icons.Outlined.Favorite, contentDescription = "Series")
+
+                Icon(
+                    Icons.Outlined.Favorite,
+                    contentDescription = "Series"
+                )
             },
 
             label = {
+
                 Text("Series")
             },
 
-            selected = navController.currentDestination?.route == "series",
+            selected = false,
 
             onClick = {
+
                 navController.navigate("series")
             }
         )
@@ -223,7 +240,9 @@ fun Contenido(
                 "serieVer/{id}",
 
                 arguments = listOf(
+
                     navArgument("id") {
+
                         type = NavType.IntType
                     }
                 )
@@ -245,7 +264,9 @@ fun Contenido(
                 "serieDel/{id}",
 
                 arguments = listOf(
+
                     navArgument("id") {
+
                         type = NavType.IntType
                     }
                 )
