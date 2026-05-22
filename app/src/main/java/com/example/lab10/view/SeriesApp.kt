@@ -90,7 +90,7 @@ fun BotonFAB(navController: NavHostController) {
 
     val rutaActual = cbeState?.destination?.route
 
-    if (rutaActual == "series") {
+    if (rutaActual == "series" || rutaActual == "peliculas") {
 
         FloatingActionButton(
 
@@ -100,7 +100,14 @@ fun BotonFAB(navController: NavHostController) {
 
             onClick = {
 
-                navController.navigate("serieNuevo")
+                if (rutaActual == "series") {
+
+                    navController.navigate("serieNuevo")
+
+                } else {
+
+                    navController.navigate("peliculaNuevo")
+                }
             }
 
         ) {
@@ -258,8 +265,65 @@ fun Contenido(
 
             composable("peliculas") {
 
-                ContenidoPeliculas(
+                ContenidoPeliculasListado(
+                    navController,
                     servicioPeliculas
+                )
+            }
+            composable("peliculaNuevo") {
+
+                ContenidoPeliculaEditar(
+                    navController,
+                    servicioPeliculas,
+                    0
+                )
+            }
+
+            composable(
+
+                "peliculaVer/{id}",
+
+                arguments = listOf(
+
+                    navArgument("id") {
+
+                        type = NavType.IntType
+                    }
+                )
+
+            ) {
+
+                ContenidoPeliculaEditar(
+
+                    navController,
+
+                    servicioPeliculas,
+
+                    it.arguments!!.getInt("id")
+                )
+            }
+
+            composable(
+
+                "peliculaDel/{id}",
+
+                arguments = listOf(
+
+                    navArgument("id") {
+
+                        type = NavType.IntType
+                    }
+                )
+
+            ) {
+
+                ContenidoPeliculaEliminar(
+
+                    navController,
+
+                    servicioPeliculas,
+
+                    it.arguments!!.getInt("id")
                 )
             }
 
